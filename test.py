@@ -1,10 +1,10 @@
 import torch
 
-from DeepDream import DeepDream
+from core import *
 
 from PIL import Image
 
-from torchvision.models import resnet18, alexnet
+from torchvision.models import alexnet
 from torchvision.transforms import ToTensor, Resize, Compose
 
 import matplotlib.pyplot as plt
