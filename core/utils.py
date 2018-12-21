@@ -8,6 +8,8 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 image_net_mean = torch.Tensor([0.485, 0.456, 0.406])
 image_net_std = torch.Tensor([0.229, 0.224, 0.225])
 
+import matplotlib.pyplot as plt
+
 class NormalizeInverse(Normalize):
     """
     Undoes the normalization and returns the reconstructed images in the input domain.
@@ -54,3 +56,10 @@ def convert_to_grayscale(cv2im):
     grayscale_im = np.expand_dims(grayscale_im, axis=0)
     return grayscale_im
 
+def imshow(tensor):
+    tensor = tensor.squeeze()
+    print(tensor.shape)
+    if len(tensor.shape) > 2: tensor = tensor.permute(1, 2, 0)
+    img = tensor.cpu().numpy()
+    plt.imshow(img, cmap='gray')
+    plt.show()

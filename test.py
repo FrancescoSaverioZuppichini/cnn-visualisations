@@ -4,7 +4,7 @@ from core import *
 
 from PIL import Image
 
-from torchvision.models import alexnet
+from torchvision.models import alexnet, vgg16, resnet18
 from torchvision.transforms import ToTensor, Resize, Compose
 
 import matplotlib.pyplot as plt
