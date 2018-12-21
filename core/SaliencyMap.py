@@ -4,7 +4,7 @@ from .Base import Base
 from torch.nn import ReLU
 from torch.autograd import Variable
 from torchvision.transforms import *
-from core.utils import convert_to_grayscale
+from .utils import convert_to_grayscale
 
 class SaliencyMap(Base):
     """
