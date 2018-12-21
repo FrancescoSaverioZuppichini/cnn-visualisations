@@ -3,8 +3,8 @@ import torchvision.transforms.functional as TF
 
 from torch.autograd import Variable
 from PIL import Image, ImageFilter, ImageChops
-from .Base import Base
-from mirror.visualisations.core.utils import image_net_postprocessing, \
+from Base import Base
+from utils import image_net_postprocessing, \
     image_net_preprocessing
 
 class DeepDream(Base):

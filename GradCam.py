@@ -4,7 +4,7 @@ import torch
 
 from torch.nn import ReLU
 from torch.autograd import Variable
-from mirror.visualisations.core.Base import Base
+from Base import Base
 
 class GradCam(Base):
     def __init__(self, *args, **kwargs):

@@ -1,6 +1,6 @@
 import torch
 
-from mirror.visualisations.core import *
+from DeepDream import DeepDream
 
 from PIL import Image
 
