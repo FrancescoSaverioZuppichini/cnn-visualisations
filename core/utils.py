@@ -63,3 +63,4 @@ def imshow(tensor):
     img = tensor.cpu().numpy()
     plt.imshow(img, cmap='gray')
     plt.show()
+

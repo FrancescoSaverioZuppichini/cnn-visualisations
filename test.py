@@ -1,6 +1,6 @@
 import torch
 
-from core import *
+from .core import *
 
 from PIL import Image
 
