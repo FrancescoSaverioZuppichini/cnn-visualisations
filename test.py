@@ -33,8 +33,8 @@ def imshow(tensor):
     plt.show()
 
 
-vis = DeepDream(model.to(device), device)
-img = vis(input.to(device), layer, octaves=4)
+vis = Weights(model.to(device), device)
+img = vis(input.to(device), layer)
 
 print(img.shape)
 with torch.no_grad():
