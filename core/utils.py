@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import cv2
 
 from torchvision.transforms import Compose, Normalize
 
@@ -37,6 +38,27 @@ image_net_postprocessing = Compose([
         std=image_net_std)
 ])
 
+def tensor2cam(image, cam):
+    image_with_heatmap = image2cam(image.squeeze().permute(1,2,0).cpu().numpy(),
+              cam.detach().cpu().numpy())
+
+    return torch.from_numpy(image_with_heatmap).permute(2,0,1)
+
+def image2cam(image, cam):
+    h, w, c = image.shape
+
+    cam = cv2.resize(cam, (h,w))
+    cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
+    cam = np.uint8(cam * 255)
+
+    heatmap = cv2.applyColorMap(cam, cv2.COLORMAP_JET)
+
+    image_with_heatmap = image * 255 + heatmap
+    image_with_heatmap = image_with_heatmap / np.max(image_with_heatmap)
+
+    return image_with_heatmap
+
+
 def convert_to_grayscale(cv2im):
     """
         Converts 3d image to grayscale
@@ -64,3 +86,22 @@ def imshow(tensor):
     plt.imshow(img, cmap='gray')
     plt.show()
 
+def module2traced(module, inputs):
+    handles, modules = [], []
+
+    def trace(module, inputs, outputs):
+        modules.append(module)
+
+    def traverse(module):
+        for m in module.children():
+            traverse(m)
+        is_leaf = len(list(module.children())) == 0
+        if is_leaf: handles.append(module.register_forward_hook(trace))
+
+    traverse(module)
+
+    _ = module(inputs)
+
+    [h.remove() for h in handles]
+
+    return modules

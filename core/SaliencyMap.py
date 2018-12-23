@@ -28,8 +28,6 @@ class SaliencyMap(Base):
                 self.handles.append(module.register_backward_hook(store_grad))
                 self.stored_grad = True
 
-
-
         def store_grad(module, grad_in, grad_out):
             self.gradients = grad_in[0]
 

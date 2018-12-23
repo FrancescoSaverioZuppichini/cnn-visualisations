@@ -6,6 +6,9 @@ from torch.nn import ReLU
 from torch.autograd import Variable
 from .Base import Base
 
+
+from .utils import tensor2cam
+
 class GradCam(Base):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,31 +59,16 @@ class GradCam(Base):
 
         with torch.no_grad():
             avg_channel_grad = self.gradients.data.squeeze().mean(1).mean(1)
-            outputs = self.conv_outputs.squeeze()
+            outputs = self.conv_outputs
+            b, c, w, h = outputs.shape
 
-            cam = torch.ones(outputs.shape[1:]).to(self.device)
+            cam = avg_channel_grad @ outputs.view((c, w * h))
+            cam = cam.view(h, w)
+            with torch.no_grad():
+                image_with_heatmap = tensor2cam(input_image, cam)
 
-            for i, w in enumerate(avg_channel_grad):
-                cam += w * outputs[i, :, :]
-
-            b, c, w, h = input_image.shape
-
-            cam = cam.cpu().numpy()
-            cam = cv2.resize(cam, (h, w))
-            cam = np.maximum(cam, 0)
-            cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
-            cam = np.uint8(cam * 255)  # Scale between 0-255 to visualize
-
-            activation_heatmap = cv2.applyColorMap(cam, cv2.COLORMAP_JET)
-
-            original_image = input_image.squeeze().permute(1, 2, 0).cpu().numpy()
-
-            img_with_heatmap = np.float32(activation_heatmap) + (original_image * 255)
-            img_with_heatmap = img_with_heatmap / np.max(img_with_heatmap)
-
-            img = torch.from_numpy(img_with_heatmap).permute(2, 0, 1)
         self.clean()
 
-        return img.unsqueeze(0)
+        return image_with_heatmap.unsqueeze(0)
 
 
