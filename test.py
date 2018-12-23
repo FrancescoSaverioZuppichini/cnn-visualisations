@@ -34,7 +34,7 @@ def imshow(tensor):
 
 
 vis = ClassActivationMapping(model.to(device), device)
-img = vis(input.to(device), layer, target_class=281, postprocessing=image_net_postprocessing)
+img = vis(input.to(device), layer, target_class=281, postprocessing=image_net_postprocessing, guide=True)
 
 print(img.shape)
 with torch.no_grad():
