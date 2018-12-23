@@ -15,7 +15,7 @@ class ClassActivationMapping(Base):
     Be aware,it requires feature maps to directly precede softmax layers.
     It will work for resnet but not for alexnet for example
     """
-    def __call__(self, inputs, layer, target_class=285):
+    def __call__(self, inputs, layer, target_class=285, postprocessing=lambda x: x):
         modules = module2traced(self.module, inputs)
         last_conv = None
         last_linear = None
@@ -47,6 +47,6 @@ class ClassActivationMapping(Base):
         cam = cam.view(h, w)
 
         with torch.no_grad():
-            image_with_heatmap = tensor2cam(inputs, cam)
+            image_with_heatmap = tensor2cam(postprocessing(inputs.squeeze()), cam)
 
         return image_with_heatmap.unsqueeze(0)

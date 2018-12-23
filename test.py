@@ -1,7 +1,7 @@
 import torch
 
 from core import *
-
+from core.utils import image_net_postprocessing
 from PIL import Image
 
 from torchvision.models import alexnet, vgg16, resnet18
@@ -34,7 +34,7 @@ def imshow(tensor):
 
 
 vis = ClassActivationMapping(model.to(device), device)
-img = vis(input.to(device), layer, target_class=281)
+img = vis(input.to(device), layer, target_class=281, postprocessing=image_net_postprocessing)
 
 print(img.shape)
 with torch.no_grad():

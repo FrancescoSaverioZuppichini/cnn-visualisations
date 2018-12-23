@@ -39,7 +39,7 @@ class GradCam(Base):
     def clean(self):
         [h.remove() for h in self.handles]
 
-    def __call__(self, input_image, layer, guide=False, target_class=None):
+    def __call__(self, input_image, layer, guide=False, target_class=None, postprocessing=lambda x: x):
         self.clean()
         self.store_outputs_and_grad(layer)
         if guide: self.guide(self.module)
@@ -65,7 +65,7 @@ class GradCam(Base):
             cam = avg_channel_grad @ outputs.view((c, w * h))
             cam = cam.view(h, w)
             with torch.no_grad():
-                image_with_heatmap = tensor2cam(input_image, cam)
+                image_with_heatmap = tensor2cam(postprocessing(input_image.squeeze()), cam)
 
         self.clean()
 
