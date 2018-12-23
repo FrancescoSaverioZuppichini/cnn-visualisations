@@ -11,7 +11,9 @@ from .utils import module2traced, imshow, tensor2cam
 
 class ClassActivationMapping(Base):
     """
-    Based on Learning Deep Features for Discriminative Localization (https://arxiv.org/abs/1512.04150)
+    Based on Learning Deep Features for Discriminative Localization (https://arxiv.org/abs/1512.04150).
+    Be aware,it requires feature maps to directly precede softmax layers.
+    It will work for resnet but not for alexnet for example
     """
     def __call__(self, inputs, layer, target_class=285):
         modules = module2traced(self.module, inputs)
