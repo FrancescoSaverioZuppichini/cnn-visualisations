@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # create a model
-model = resnet18(pretrained=True)
+model = alexnet(pretrained=True)
 print(model)
 cat = Image.open("/Users/vaevictis/Documents/Project/A-journey-into-Convolutional-Neural-Network-visualization-/images/cat.jpg")
 # resize the image and make it a tensor
@@ -21,7 +21,7 @@ input = Compose([Resize((224,224)), ToTensor()])(cat)
 input = input.unsqueeze(0)
 # call mirror with the input and the model
 layers = list(model.children())
-layer = layers[0]
+layer = layers[0][12]
 print(layer)
 
 def imshow(tensor):
@@ -33,8 +33,8 @@ def imshow(tensor):
     plt.show()
 
 
-vis = ClassActivationMapping(model.to(device), device)
-img = vis(input.to(device), layer, target_class=281, postprocessing=image_net_postprocessing, guide=True)
+vis = GradCam(model.to(device), device)
+img = vis(input.to(device), layer, target_class=285, postprocessing=image_net_postprocessing, guide=True)
 
 print(img.shape)
 with torch.no_grad():

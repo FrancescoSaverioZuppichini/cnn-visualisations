@@ -16,19 +16,10 @@ class ClassActivationMapping(Base):
     It will work for resnet but not for alexnet for example
     """
 
-    def guide(self, module):
-        def guide_relu(module, grad_in, grad_out):
-            return (torch.clamp(grad_in[0], min=0.0),)
-
-        for module in module.modules():
-            if isinstance(module, ReLU):
-                self.handles.append(module.register_backward_hook(guide_relu))
-
     def __call__(self, inputs, layer, target_class=285, postprocessing=lambda x: x, guide=False):
         modules = module2traced(self.module, inputs)
         last_conv = None
         last_linear = None
-        if guide: self.guide(self.module)
 
         for i, module in enumerate(modules):
             if isinstance(module, Conv2d):

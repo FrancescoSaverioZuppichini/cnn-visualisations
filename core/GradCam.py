@@ -18,7 +18,6 @@ class GradCam(Base):
 
     def store_outputs_and_grad(self, layer):
         def store_grad(grad):
-            print('GradCam')
             self.gradients = grad
 
         def store_outputs(module, input, outputs):
