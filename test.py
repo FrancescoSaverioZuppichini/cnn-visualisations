@@ -12,9 +12,9 @@ from core.utils import image_net_postprocessing, image_net_preprocessing
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # create a model
-model = resnet18(pretrained=True)
+model = resnet152(pretrained=True)
 # print(model)
-cat = Image.open("/Users/vaevictis/Desktop/cat_dog.png")
+cat = Image.open("/Users/vaevictis/Desktop/cat.jpg")
 # resize the image and make it a tensor
 input = Compose([Resize((224,224)), ToTensor(), image_net_preprocessing])(cat)
 # add 1 dim for batch
@@ -31,10 +31,11 @@ def imshow(tensor):
     plt.imshow(img, cmap='gray')
     plt.show()
 
+model.eval()
 
-vis = GradCam(model.to(device), device)
+vis = ClassActivationMapping(model.to(device), device)
 img = vis(input.to(device), None,
-          target_class=246,
+          target_class=None,
           postprocessing=image_net_postprocessing,
           guide=False)
 

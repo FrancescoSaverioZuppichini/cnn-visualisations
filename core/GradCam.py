@@ -42,7 +42,6 @@ class GradCam(Base):
 
     def __call__(self, input_image, layer, guide=False, target_class=None, postprocessing=lambda x: x):
         self.clean()
-        self.module.eval()
         self.module.zero_grad()
 
         if layer is None:

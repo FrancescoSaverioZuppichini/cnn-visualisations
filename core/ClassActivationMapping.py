@@ -29,7 +29,6 @@ class ClassActivationMapping(Base):
                 pass
             if isinstance(module, Linear):
                 last_linear = module
-                print(i, module)
 
         def store_conv_outputs(module, inputs, outputs):
             self.conv_outputs = outputs
@@ -39,7 +38,7 @@ class ClassActivationMapping(Base):
         predictions = self.module(inputs)
 
         if target_class == None: _, target_class = torch.max(predictions, dim=1)
-
+        print(target_class)
         _, c, h, w = self.conv_outputs.shape
         # get the weights relative to the target class
         fc_weights_class = last_linear.weight.data[target_class]
@@ -47,7 +46,6 @@ class ClassActivationMapping(Base):
         # convolution output
         cam = fc_weights_class @ self.conv_outputs.view((c, h * w))
         cam = cam.view(h, w)
-        cam = F.relu(cam)
 
         with torch.no_grad():
             image_with_heatmap = tensor2cam(postprocessing(inputs.squeeze()), cam)
