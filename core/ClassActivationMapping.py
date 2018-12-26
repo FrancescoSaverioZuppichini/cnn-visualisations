@@ -7,6 +7,7 @@ from .Base import Base
 
 from .utils import module2traced, imshow, tensor2cam
 
+import torch.nn.functional as F
 
 
 class ClassActivationMapping(Base):
@@ -16,7 +17,7 @@ class ClassActivationMapping(Base):
     It will work for resnet but not for alexnet for example
     """
 
-    def __call__(self, inputs, layer, target_class=285, postprocessing=lambda x: x, guide=False):
+    def __call__(self, inputs, layer, target_class=None, postprocessing=lambda x: x, guide=False):
         modules = module2traced(self.module, inputs)
         last_conv = None
         last_linear = None
@@ -42,10 +43,11 @@ class ClassActivationMapping(Base):
         _, c, h, w = self.conv_outputs.shape
         # get the weights relative to the target class
         fc_weights_class = last_linear.weight.data[target_class]
-        # sum upp the multiplication of each weight w_k for the relative channel in the last
+        # sum up the multiplication of each weight w_k for the relative channel in the last
         # convolution output
         cam = fc_weights_class @ self.conv_outputs.view((c, h * w))
         cam = cam.view(h, w)
+        cam = F.relu(cam)
 
         with torch.no_grad():
             image_with_heatmap = tensor2cam(postprocessing(inputs.squeeze()), cam)

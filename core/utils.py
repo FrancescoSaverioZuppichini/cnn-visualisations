@@ -47,16 +47,17 @@ def tensor2cam(image, cam):
 def image2cam(image, cam):
     h, w, c = image.shape
 
+    cam -= np.min(cam)
+    cam /= np.max(cam)  # Normalize between 0-1
     cam = cv2.resize(cam, (h,w))
-    cam = (cam - np.min(cam)) / (np.max(cam) - np.min(cam))  # Normalize between 0-1
-    cam = np.uint8(cam * 255)
+    cam = np.uint8(cam * 255.0)
 
-    heatmap = cv2.applyColorMap(cam, cv2.COLORMAP_JET)
+    img_with_cam = cv2.applyColorMap(cam, cv2.COLORMAP_JET)
+    img_with_cam = cv2.cvtColor(img_with_cam, cv2.COLOR_BGR2RGB)
+    img_with_cam = img_with_cam + (image * 255)
+    img_with_cam /= np.max(img_with_cam)
 
-    image_with_heatmap = image * 255 + heatmap
-    image_with_heatmap = image_with_heatmap / np.max(image_with_heatmap)
-
-    return image_with_heatmap
+    return img_with_cam
 
 
 def convert_to_grayscale(cv2im):
@@ -80,7 +81,6 @@ def convert_to_grayscale(cv2im):
 
 def imshow(tensor):
     tensor = tensor.squeeze()
-    print(tensor.shape)
     if len(tensor.shape) > 2: tensor = tensor.permute(1, 2, 0)
     img = tensor.cpu().numpy()
     plt.imshow(img, cmap='gray')
