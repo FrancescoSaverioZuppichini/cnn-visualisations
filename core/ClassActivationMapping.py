@@ -38,7 +38,6 @@ class ClassActivationMapping(Base):
         predictions = self.module(inputs)
 
         if target_class == None: _, target_class = torch.max(predictions, dim=1)
-        print(target_class)
         _, c, h, w = self.conv_outputs.shape
         # get the weights relative to the target class
         fc_weights_class = last_linear.weight.data[target_class]
@@ -50,4 +49,4 @@ class ClassActivationMapping(Base):
         with torch.no_grad():
             image_with_heatmap = tensor2cam(postprocessing(inputs.squeeze()), cam)
 
-        return image_with_heatmap.unsqueeze(0)
+        return image_with_heatmap.unsqueeze(0), { 'prediction': target_class }

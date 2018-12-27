@@ -7,4 +7,4 @@ class Base:
         [h.remove() for h in self.handles]
 
     def __call__(self, inputs, layer, *args, **kwargs):
-        return inputs
+        return inputs, {}

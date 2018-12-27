@@ -15,4 +15,4 @@ class Weights(Base):
         # reshape to make an array of images 1-Channel
         outputs = self.outputs.view(c, b, h, w)
 
-        return outputs
+        return outputs, {}

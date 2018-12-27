@@ -58,7 +58,6 @@ class GradCam(Base):
         predictions = self.module(input_var)
 
         if target_class is None: values, target_class = torch.max(predictions, dim=1)
-        print(target_class)
 
         target = torch.zeros(predictions.size()).to(self.device)
         target[0][target_class] = 1
@@ -72,6 +71,6 @@ class GradCam(Base):
 
         self.clean()
 
-        return image_with_heatmap.unsqueeze(0)
+        return image_with_heatmap.unsqueeze(0), { 'prediction': target_class }
 
 

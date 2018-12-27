@@ -86,4 +86,4 @@ class DeepDream(Base):
                              scale_factor=scale_factor)
         self.handle.remove()
 
-        return dd.unsqueeze(0)
+        return dd.unsqueeze(0), {}

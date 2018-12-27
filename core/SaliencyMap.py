@@ -71,5 +71,5 @@ class SaliencyMap(Base):
 
         self.clean()
 
-        return image.unsqueeze(0)
+        return image.unsqueeze(0), { 'prediction': target_class }
 
